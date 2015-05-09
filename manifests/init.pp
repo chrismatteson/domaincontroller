@@ -4,15 +4,15 @@ class domaincontroller (
   ){
 
   dism { [
+    'ServerManager-Core-RSAT'
+    'ServerManager-Core-RSAT-Role-Tools',
+    'RSAT-AD-Tools-Feature',
     'RSAT-ADDS-Tools-Feature',
-    'DirectoryServices-DomainController',
-    'DirectoryServices-DomainController-Tools',
     'DNS-Server-Full-Role',
     'DNS-Server-Tools',
     'ActiveDirectory-Powershell',
-    'RSAT-AD-Tools-Feature',
-    'ServerManager-Core-RSAT-Role-Tools',
-    'ServerManager-Core-RSAT'
+    'DirectoryServices-DomainController',
+    'DirectoryServices-DomainController-Tools',
   ]:
     ensure => 'present',
   }
@@ -21,6 +21,7 @@ class domaincontroller (
     command  => "install-addsforest -domainname $domainname -safemodeadministratorpassword ('$safemodeadministratorpassword' | convertto-securestring -asplaintext -force) -force",
     unless   => "get-adforest -identity $domainname",
     provider => 'powershell',
+    require  => Dism['DirectoryServices-DomainController-Tools'],
   }
 
 }
